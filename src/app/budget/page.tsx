@@ -3,6 +3,9 @@ import { revalidatePath } from "next/cache";
 import Card from "../components/Card";
 import EmptyState from "../components/EmptyState";
 
+// TAMBAHKAN BARIS INI: Memaksa halaman untuk selalu di-render secara dinamis (SSR)
+export const dynamic = 'force-dynamic';
+
 export default async function BudgetPage() {
     const budgets = await getBudgets();
 
