@@ -2,6 +2,9 @@ import { revalidatePath } from "next/cache";
 import { createEvent, deleteEvent, getEvent } from "../action/event";
 import EmptyState from "../components/EmptyState";
 
+// Tambahkan di bagian atas file, setelah import
+export const dynamic = 'force-dynamic';
+
 export default async function CalendarPage() {
   const events = await getEvent();
 
