@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model Transaction {
+  id String @id @default (uuid())
+  type String 
+  amount Float
+  category String
+  note String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Budget {
+  id String @id @default(uuid())
+  category String @unique
+  limit Float
+  period String @default("montly")
+  createdAt DateTime @default(now())
+}
+
+model SavingGoal {
+  id            String   @id @default(uuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  dailyRate     Float    @default(0)
+  createdAt     DateTime @default(now())
+}
+
+model Todo {
+  id String @id @default(uuid())
+  title String
+  done Boolean @default(false)
+  priority String @default("medium")
+  dueDate DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Goal {
+  id String @id @default(uuid())
+  title String
+  description String?
+  targetDate DateTime?
+  createdAt DateTime @default(now())
+  milestones Milestone[]
+}
+
+model Milestone {
+  id String @id @default(uuid())
+  title String
+  done Boolean @default(false)
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goalId String
+}
+
+model Event {
+  id String @id @default(uuid())
+  title String
+  date DateTime
+  note String?
+  createdAt DateTime @default(now())
+}
+
+model Habit {
+  id              String     @id @default(uuid())
+  name            String
+  frequency       String     @default("daily")
+  frequencyTarget Int        @default(7)
+  createdAt       DateTime   @default(now())
+  logs            HabitLog[]
+}
+
+model HabitLog {
+  id        String   @id @default(uuid())
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  habitId   String
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, date])
+}
+
+model Journal {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  caption   String
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

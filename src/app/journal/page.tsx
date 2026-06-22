@@ -1,0 +1,24 @@
+import { getJournals } from "../action/journal";
+import JournalGrid from "./JournalGrid";
+import JournalUploader from "./JournalUploader";
+
+export default async function JournalPage() {
+  const journals = await getJournals();
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-header">
+        <h1 className="page-title">Journal</h1>
+        <p className="page-subtitle">Abadikan momen dan memori penting setiap hari</p>
+      </div>
+
+      <JournalUploader />
+      
+      <div className="section-header mt-xl">
+        <h2 className="section-title">Galeri Memori</h2>
+      </div>
+      
+      <JournalGrid journals={journals} />
+    </div>
+  );
+}
