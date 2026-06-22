@@ -3,6 +3,8 @@ import Link from "next/link";
 import Card from "../components/Card";
 import EmptyState from "../components/EmptyState";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   // Fetch data in parallel for dashboard
   const today = new Date();

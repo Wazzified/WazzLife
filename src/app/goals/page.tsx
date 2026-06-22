@@ -2,6 +2,8 @@ import { createSavingGoal, addDailySaving, deleteSavingGoal, getSavingGoals } fr
 import EmptyState from "../components/EmptyState";
 import GoalForm from "./GoalForm";
 
+export const dynamic = 'force-dynamic';
+
 export default async function GoalsPage() {
     const goals = await getSavingGoals();
 

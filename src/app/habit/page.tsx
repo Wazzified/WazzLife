@@ -3,6 +3,8 @@ import { createHabit, deleteHabit, getHabits } from "../action/habit";
 import HabitCard from "./HabitCard";
 import EmptyState from "../components/EmptyState";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HabitPage() {
   const habits = await getHabits();
 

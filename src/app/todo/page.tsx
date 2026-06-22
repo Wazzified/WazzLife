@@ -3,6 +3,8 @@
 import { useState } from "react";
 import DatePicker from "../components/DatePicker";
 
+export const dynamic = 'force-dynamic';
+
 interface TodoFormProps {
   action: (formData: FormData) => void | Promise<void>;
 }

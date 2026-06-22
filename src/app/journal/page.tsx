@@ -2,6 +2,8 @@ import { getJournals } from "../action/journal";
 import JournalGrid from "./JournalGrid";
 import JournalUploader from "./JournalUploader";
 
+export const dynamic = 'force-dynamic';
+
 export default async function JournalPage() {
   const journals = await getJournals();
 

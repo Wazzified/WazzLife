@@ -2,6 +2,8 @@ import { revalidatePath } from "next/cache";
 import { createTransaction, deleteTransaction, getTransactions } from "../action/transaction";
 import EmptyState from "../components/EmptyState";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ExpensePage() {
   const transactions = await getTransactions();
 

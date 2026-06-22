@@ -4,6 +4,8 @@ import Card from "../components/Card";
 import EmptyState from "../components/EmptyState";
 import GoalPlannerForm from "./GoalPlannerForm";
 
+export const dynamic = 'force-dynamic';
+
 export default async function GoalPage() {
   const goals = await getGoals();
 
