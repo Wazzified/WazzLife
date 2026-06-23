@@ -1,11 +1,14 @@
 import { revalidatePath } from "next/cache";
 import { createEvent, deleteEvent, getEvent } from "../action/event";
 import EmptyState from "../components/EmptyState";
+import { auth } from "@/lib/auth";
 
-// Tambahkan di bagian atas file, setelah import
 export const dynamic = 'force-dynamic';
 
 export default async function CalendarPage() {
+  const session = await auth();
+  const isDemo = session?.user?.role === "demo";
+
   const events = await getEvent();
 
   async function handleCreate(formData: FormData) {
@@ -74,23 +77,32 @@ export default async function CalendarPage() {
           <div className="section-header">
             <h2 className="section-title">Tambah Acara</h2>
           </div>
-          <form action={handleCreate} className="form-grid">
-            <div className="input-group">
-              <label className="input-label">Judul</label>
-              <input name="title" type="text" placeholder="Cth: Meeting, Ulang Tahun" className="input" required />
+          
+          {isDemo ? (
+            <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-border-default rounded-lg bg-bg-input/50">
+              <svg className="w-10 h-10 text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <p className="text-sm font-medium text-secondary">Mode Demo Aktif</p>
+              <p className="text-xs text-muted mt-1">Anda hanya dapat melihat data.</p>
             </div>
-            <div className="input-group">
-              <label className="input-label">Tanggal</label>
-              <input name="date" type="date" className="input" required defaultValue={new Date().toISOString().split('T')[0]} />
-            </div>
-            <div className="input-group">
-              <label className="input-label">Catatan</label>
-              <textarea name="note" placeholder="Opsional" className="input" rows={3}></textarea>
-            </div>
-            <button type="submit" className="btn btn-primary mt-sm w-full">
-              Simpan Jadwal
-            </button>
-          </form>
+          ) : (
+            <form action={handleCreate} className="form-grid">
+              <div className="input-group">
+                <label className="input-label">Judul</label>
+                <input name="title" type="text" placeholder="Cth: Meeting, Ulang Tahun" className="input" required />
+              </div>
+              <div className="input-group">
+                <label className="input-label">Tanggal</label>
+                <input name="date" type="date" className="input" required defaultValue={new Date().toISOString().split('T')[0]} />
+              </div>
+              <div className="input-group">
+                <label className="input-label">Catatan</label>
+                <textarea name="note" placeholder="Opsional" className="input" rows={3}></textarea>
+              </div>
+              <button type="submit" className="btn btn-primary mt-sm w-full">
+                Simpan Jadwal
+              </button>
+            </form>
+          )}
         </div>
 
         <div className="md:col-span-2 col-span-3">
@@ -153,15 +165,17 @@ export default async function CalendarPage() {
                         {e.note && <p className="text-xs text-secondary">{e.note}</p>}
                       </div>
                     </div>
-                    <form action={handleDelete}>
-                      <input type="hidden" name="id" value={e.id} />
-                      <button type="submit" className="btn-icon btn-ghost text-danger hover:bg-danger/10 rounded-full" title="Hapus jadwal">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/>
-                          <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </button>
-                    </form>
+                    {!isDemo && (
+                      <form action={handleDelete}>
+                        <input type="hidden" name="id" value={e.id} />
+                        <button type="submit" className="btn-icon btn-ghost text-danger hover:bg-danger/10 rounded-full" title="Hapus jadwal">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        </button>
+                      </form>
+                    )}
                   </div>
                 ))}
               </div>

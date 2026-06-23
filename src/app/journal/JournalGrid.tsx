@@ -12,9 +12,10 @@ interface JournalProps {
     caption: string;
     date: Date;
   }[];
+  isDemo?: boolean; // ← TAMBAHIN INI
 }
 
-export default function JournalGrid({ journals }: JournalProps) {
+export default function JournalGrid({ journals, isDemo = false }: JournalProps) {
   const router = useRouter();
   const [selectedJournal, setSelectedJournal] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -98,13 +99,16 @@ export default function JournalGrid({ journals }: JournalProps) {
             </div>
             
             <div className="modal-footer">
-              <button 
-                onClick={handleDelete} 
-                disabled={isDeleting}
-                className="btn btn-danger"
-              >
-                {isDeleting ? "Menghapus..." : "Hapus Foto"}
-              </button>
+              {/* Sembunyikan tombol hapus kalau mode demo */}
+              {!isDemo && (
+                <button 
+                  onClick={handleDelete} 
+                  disabled={isDeleting}
+                  className="btn btn-danger"
+                >
+                  {isDeleting ? "Menghapus..." : "Hapus Foto"}
+                </button>
+              )}
             </div>
           </div>
         </div>

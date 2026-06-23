@@ -12,7 +12,12 @@ interface Note {
   updatedAt: Date;
 }
 
-export default function NotesDashboard({ initialNotes }: { initialNotes: any[] }) {
+interface NotesDashboardProps {
+  initialNotes: any[];
+  isDemo?: boolean;
+}
+
+export default function NotesDashboard({ initialNotes, isDemo = false }: NotesDashboardProps) {
   const [mounted, setMounted] = useState(false);
   const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,16 +86,34 @@ export default function NotesDashboard({ initialNotes }: { initialNotes: any[] }
           <h1 className="page-title">Notes</h1>
           <p className="page-subtitle">Simpan catatan, ide, atau pengingat bebas Anda</p>
         </div>
-        <button onClick={openNewNoteModal} className="btn btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Catatan Baru
-        </button>
+        
+        {/* Tombol Catatan Baru - Hidden kalau demo */}
+        {!isDemo && (
+          <button onClick={openNewNoteModal} className="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Catatan Baru
+          </button>
+        )}
       </div>
 
-      {notes.length === 0 ? (
+      {isDemo ? (
+        // Tampilan Mode Demo - Kotak dengan gembok
+        <div 
+          className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-default rounded-lg bg-bg-input/50 pointer-events-none select-none"
+          style={{ cursor: 'not-allowed' }}
+        >
+          <svg className="w-16 h-16 text-muted mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/>
+          </svg>
+          <h3 className="text-lg font-semibold text-secondary mb-2">Mode Demo Aktif</h3>
+          <p className="text-sm text-muted max-w-md">
+            Fitur Notes terkunci. Login sebagai Admin untuk membuat, mengedit, atau menghapus catatan.
+          </p>
+        </div>
+      ) : notes.length === 0 ? (
         <EmptyState 
           title="Belum ada catatan" 
           description="Klik 'Catatan Baru' untuk mulai menulis ide atau hal penting yang perlu Anda ingat."
@@ -124,9 +147,11 @@ export default function NotesDashboard({ initialNotes }: { initialNotes: any[] }
                   </svg>
                 </button>
               </div>
+              
               <p className="text-sm text-secondary whitespace-pre-wrap line-clamp-5 flex-1 break-words">
                 {note.content}
               </p>
+              
               <div className="mt-auto pt-sm border-t border-border-default mt-sm">
                 <p className="text-xs text-tertiary">
                   Diperbarui: {new Date(note.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}

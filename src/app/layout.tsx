@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+import PathBodyClass from "./components/PathBodyClass"; // ← TAMBAHIN INI
 
 const inter = Inter({
   variable: "--font-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
     >
       <body>
+        <PathBodyClass /> {/* ← TAMBAHIN INI JUGA */}
         <div className="app-layout">
           <Sidebar />
           <main className="main-content">{children}</main>

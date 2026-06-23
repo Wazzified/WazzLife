@@ -16,9 +16,10 @@ interface HabitCardProps {
   streak: number;
   completionRate: number;
   logs: HabitLog[];
+  isDemo?: boolean; // ← TAMBAHIN INI
 }
 
-export default function HabitCard({ id, name, frequency, streak, completionRate, logs }: HabitCardProps) {
+export default function HabitCard({ id, name, frequency, streak, completionRate, logs, isDemo = false }: HabitCardProps) {
   const router = useRouter();
   const [isToggling, setIsToggling] = useState(false);
 
@@ -41,7 +42,7 @@ export default function HabitCard({ id, name, frequency, streak, completionRate,
   };
 
   const handleToggle = async (date: Date) => {
-    if (isToggling) return;
+    if (isToggling || isDemo) return; // ← CEK ISDEMO
     setIsToggling(true);
     try {
       await toggleHabitLog(id, date);
@@ -80,8 +81,8 @@ export default function HabitCard({ id, name, frequency, streak, completionRate,
               <div 
                 key={i} 
                 onClick={() => handleToggle(date)}
-                className={`habit-day-cell habit-day-toggle ${isLogged ? 'habit-day-done' : 'habit-day-empty'} ${isToday ? 'habit-day-today' : ''}`}
-                title={date.toLocaleDateString('id-ID')}
+                className={`habit-day-cell habit-day-toggle ${isLogged ? 'habit-day-done' : 'habit-day-empty'} ${isToday ? 'habit-day-today' : ''} ${isDemo ? 'cursor-not-allowed opacity-60' : ''}`}
+                title={isDemo ? "Mode demo tidak bisa mengubah habit" : date.toLocaleDateString('id-ID')}
               >
                 {date.getDate()}
               </div>
@@ -91,8 +92,9 @@ export default function HabitCard({ id, name, frequency, streak, completionRate,
         
         <button 
           onClick={() => handleToggle(today)}
-          disabled={isToggling}
-          className={`btn btn-sm ${todayIsLogged ? 'btn-ghost' : 'btn-primary'}`}
+          disabled={isToggling || isDemo}
+          className={`btn btn-sm ${todayIsLogged ? 'btn-ghost' : 'btn-primary'} ${isDemo ? 'opacity-60 cursor-not-allowed' : ''}`}
+          title={isDemo ? "Mode demo tidak bisa mengubah habit" : ""}
         >
           {todayIsLogged ? 'Batal' : 'Selesai'}
         </button>

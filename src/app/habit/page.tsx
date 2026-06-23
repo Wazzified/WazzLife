@@ -2,10 +2,14 @@ import { revalidatePath } from "next/cache";
 import { createHabit, deleteHabit, getHabits } from "../action/habit";
 import HabitCard from "./HabitCard";
 import EmptyState from "../components/EmptyState";
+import { auth } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HabitPage() {
+  const session = await auth();
+  const isDemo = session?.user?.role === "demo";
+
   const habits = await getHabits();
 
   async function handleCreate(formData: FormData) {
@@ -44,22 +48,31 @@ export default async function HabitPage() {
         <div className="section-header">
           <h2 className="section-title">Tambah Habit Baru</h2>
         </div>
-        <form action={handleCreate} className="form-row">
-          <div className="input-group">
-            <input name="name" type="text" placeholder="Nama kebiasaan (cth: Baca buku, Olahraga)" className="input" required />
+        
+        {isDemo ? (
+          <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-border-default rounded-lg bg-bg-input/50">
+            <svg className="w-10 h-10 text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <p className="text-sm font-medium text-secondary">Mode Demo Aktif</p>
+            <p className="text-xs text-muted mt-1">Anda hanya dapat melihat data.</p>
           </div>
-          <div className="input-group" style={{ maxWidth: '200px' }}>
-            <select name="frequency" className="select" required>
-              <option value="daily">Setiap Hari</option>
-              <option value="1x_week">1x Seminggu</option>
-              <option value="3x_week">3x Seminggu</option>
-              <option value="5x_week">5x Seminggu</option>
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Tambah
-          </button>
-        </form>
+        ) : (
+          <form action={handleCreate} className="form-row">
+            <div className="input-group">
+              <input name="name" type="text" placeholder="Nama kebiasaan (cth: Baca buku, Olahraga)" className="input" required />
+            </div>
+            <div className="input-group" style={{ maxWidth: '200px' }}>
+              <select name="frequency" className="select" required>
+                <option value="daily">Setiap Hari</option>
+                <option value="1x_week">1x Seminggu</option>
+                <option value="3x_week">3x Seminggu</option>
+                <option value="5x_week">5x Seminggu</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Tambah
+            </button>
+          </form>
+        )}
       </div>
 
       {habits.length === 0 ? (
@@ -83,15 +96,18 @@ export default async function HabitPage() {
                 streak={habit.streak}
                 completionRate={habit.completionRate}
                 logs={habit.logs}
+                isDemo={isDemo}
               />
-              <form action={handleDelete} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <input type="hidden" name="id" value={habit.id} />
-                <button type="submit" className="btn-icon btn-ghost text-danger hover:bg-danger/10 rounded-full" title="Hapus habit">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg>
-                </button>
-              </form>
+              {!isDemo && (
+                <form action={handleDelete} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <input type="hidden" name="id" value={habit.id} />
+                  <button type="submit" className="btn-icon btn-ghost text-danger hover:bg-danger/10 rounded-full" title="Hapus habit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                </form>
+              )}
             </div>
           ))}
         </div>

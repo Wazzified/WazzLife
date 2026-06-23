@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 const navItems = [
   {
@@ -121,6 +122,17 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Hide sidebar di halaman login
+  if (pathname === "/login") {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    if (confirm("Yakin ingin logout?")) {
+      await signOut({ callbackUrl: "/login" });
+    }
+  };
+
   return (
     <>
       {/* Mobile hamburger */}
@@ -187,6 +199,22 @@ export default function Sidebar() {
               </Link>
             );
           })}
+          
+          {/* Tombol Logout */}
+          <button
+            onClick={handleLogout}
+            className="sidebar-link text-danger hover:text-danger hover:bg-danger/10 mt-md"
+            style={{ width: '100%', border: 'none', cursor: 'pointer' }}
+          >
+            <span className="sidebar-link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </span>
+            <span className="sidebar-link-label">Logout</span>
+          </button>
         </nav>
 
         <div className="sidebar-footer">
